@@ -1,0 +1,16 @@
+{application, ehotfix,
+  [{description, "Do hot fix manually in Erlang"},
+    {vsn, "0.1.0"},
+    {registered, []},
+    {mod, {ehotfix_app, []}},
+    {applications,
+      [kernel,
+        stdlib
+      ]},
+    {env, []},
+    {modules, []},
+
+    {maintainers, []},
+    {licenses, ["Apache 2.0"]},
+    {links, []}
+  ]}.
