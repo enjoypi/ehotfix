@@ -137,19 +137,24 @@ changed(Module, Loaded) when is_list(Loaded) ->
     {ok, {Module, MD5}} = beam_lib:md5(Loaded),
     Module:module_info(md5) =/= MD5
   catch
-    _ : _ ->
+    _ : _Reason ->
       false
   end;
 changed(_, _) ->
   false.
 
-purge([]) ->
-  ok;
 purge(Modules) ->
+  purge(Modules, 10).
+
+purge([], _) ->
+  ok;
+purge(NotPurged, N) when N =< 0 ->
+  {cannot_purge, NotPurged};
+purge(Modules, N) ->
   Purged = [Module || Module <- Modules, code:soft_purge(Module)],
   NotPurged = sets:to_list(sets:subtract(sets:from_list(Modules), sets:from_list(Purged))),
   ok = timer:sleep(1000),
-  purge(NotPurged).
+  purge(NotPurged, N - 1).
 
 reload_beam() ->
   Modules = [Module || {Module, Loaded} <- code:all_loaded(), changed(Module, Loaded)],
